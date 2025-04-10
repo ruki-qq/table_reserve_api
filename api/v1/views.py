@@ -31,7 +31,7 @@ async def get_table(
 
 @router.delete("/{table_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_table(
-    report: Annotated[models.Table, Depends(dependencies.get_one_by_id)],
+    table: Annotated[models.Table, Depends(dependencies.get_one_by_id)],
     session: Annotated[
         "AsyncSession",
         Depends(db_helper.scoped_session_dependency),
