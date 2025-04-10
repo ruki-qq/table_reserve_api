@@ -10,10 +10,10 @@ from .models import Table, Reservation
 
 
 async def get_one_by_id(
-    id: Annotated[int, Path],
+    obj_id: Annotated[int, Path],
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ) -> Table | Reservation:
-    obj = await crud.get_one(session=session, id=id)
+    obj = await crud.get_one(session=session, obj_id=obj_id)
     if obj is not None:
         return obj
 

@@ -14,9 +14,9 @@ async def get_list(
 
 
 async def get_one(
-    session: AsyncSession, model: Base, id: int
+    session: AsyncSession, model: Base, obj_id: int
 ) -> schemas.Table | schemas.Reservation | None:
-    stmt = select(model).filter(models.Table.id == id)
+    stmt = select(model).filter(models.Table.id == obj_id)
     result = await session.execute(stmt)
     return result.scalar_one_or_none()
 
