@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from api.v1 import crud, dependencies, models, schemas
 from core import db_helper
 
-router = APIRouter(prefix="/departments", tags=["departments"])
+router = APIRouter(prefix="/tables", tags=["tables"])
 
 
 @router.get("", response_model=list[models.Table])
