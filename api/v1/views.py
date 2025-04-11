@@ -1,6 +1,8 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, status
+from fastapi_pagination import Page
+from fastapi_pagination.ext.sqlalchemy import paginate
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.v1 import crud, dependencies, models, schemas
@@ -19,7 +21,7 @@ async def get_tables(
     return await crud.get_list(session, models.Table)
 
 
-@table_router.get("/{table_id}/")
+@table_router.get("/{obj_id}/")
 async def get_table(
     table: Annotated[
         models.Table,
@@ -29,7 +31,22 @@ async def get_table(
     return table
 
 
-@table_router.delete("/{table_id}/", status_code=status.HTTP_204_NO_CONTENT)
+@table_router.post(
+    "/",
+    response_model=schemas.Table,
+    status_code=status.HTTP_201_CREATED,
+)
+async def create_candidate(
+    table_in: schemas.TableCreate,
+    session: Annotated[
+        "AsyncSession",
+        Depends(db_helper.scoped_session_dependency),
+    ],
+) -> schemas.Table:
+    return await crud.create_one(session=session, model=models.Table, model_in=table_in)
+
+
+@table_router.delete("/{obj_id}/", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_table(
     table: Annotated[models.Table, Depends(dependencies.get_one_by_id)],
     session: Annotated[
@@ -53,7 +70,7 @@ async def get_reservations(
     return await crud.get_list(session, models.Reservation)
 
 
-@reservation_router.get("/{reservation_id}/")
+@reservation_router.get("/{obj_id}/")
 async def get_reservation(
     reservation: Annotated[
         models.Reservation,
@@ -63,7 +80,7 @@ async def get_reservation(
     return reservation
 
 
-@reservation_router.delete("/{reservation_id}/", status_code=status.HTTP_204_NO_CONTENT)
+@reservation_router.delete("/{obj_id}/", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_reservation(
     reservation: Annotated[models.Reservation, Depends(dependencies.get_one_by_id)],
     session: Annotated[

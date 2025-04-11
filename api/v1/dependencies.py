@@ -12,7 +12,7 @@ async def get_one_by_id(
     obj_id: Annotated[int, Path],
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ) -> models.Table | models.Reservation:
-    obj = await crud.get_one(session=session, obj_id=obj_id)
+    obj = await crud.get_one(session=session, model=models.Table, obj_id=obj_id)
     if obj is not None:
         return obj
 

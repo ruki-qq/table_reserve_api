@@ -1,5 +1,8 @@
+from datetime import datetime
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi_pagination import add_pagination
 
 import uvicorn
 from api import router_v1
@@ -20,9 +23,10 @@ app.add_middleware(
 )
 
 app.include_router(router_v1, prefix=settings.api_prefix)
-
+add_pagination(app)
 
 if __name__ == "__main__":
+    print(type(datetime.now()))
     uvicorn.run(
         "main:app",
         reload=True,
