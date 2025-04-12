@@ -38,6 +38,7 @@ async def create_one(
 
         obj = model(**model_in.model_dump())
     try:
+        session.add(obj)
         await session.commit()
         return obj
     except IntegrityError:

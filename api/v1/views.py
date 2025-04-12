@@ -9,6 +9,7 @@ from api.v1 import crud, dependencies, models, schemas
 from core import db_helper
 
 table_router = APIRouter(prefix="/tables", tags=["tables"])
+reservation_router = APIRouter(prefix="/reservations", tags=["reservations"])
 
 
 @table_router.get("/", response_model=list[schemas.Table])
@@ -25,7 +26,7 @@ async def get_tables(
 async def get_table(
     table: Annotated[
         models.Table,
-        Depends(dependencies.get_one_by_id),
+        Depends(dependencies.get_table_by_id),
     ],
 ) -> schemas.Table:
     return table
@@ -36,7 +37,7 @@ async def get_table(
     response_model=schemas.Table,
     status_code=status.HTTP_201_CREATED,
 )
-async def create_candidate(
+async def create_table(
     table_in: schemas.TableCreate,
     session: Annotated[
         "AsyncSession",
@@ -48,16 +49,13 @@ async def create_candidate(
 
 @table_router.delete("/{obj_id}/", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_table(
-    table: Annotated[models.Table, Depends(dependencies.get_one_by_id)],
+    table: Annotated[models.Table, Depends(dependencies.get_table_by_id)],
     session: Annotated[
         "AsyncSession",
         Depends(db_helper.scoped_session_dependency),
     ],
 ) -> None:
     await crud.delete_one(session=session, obj=table)
-
-
-reservation_router = APIRouter(prefix="/reservations", tags=["reservations"])
 
 
 @reservation_router.get("/", response_model=list[schemas.Reservation])
@@ -74,7 +72,7 @@ async def get_reservations(
 async def get_reservation(
     reservation: Annotated[
         models.Reservation,
-        Depends(dependencies.get_one_by_id),
+        Depends(dependencies.get_reservation_by_id),
     ],
 ) -> schemas.Reservation:
     return reservation
@@ -82,7 +80,9 @@ async def get_reservation(
 
 @reservation_router.delete("/{obj_id}/", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_reservation(
-    reservation: Annotated[models.Reservation, Depends(dependencies.get_one_by_id)],
+    reservation: Annotated[
+        models.Reservation, Depends(dependencies.get_reservation_by_id)
+    ],
     session: Annotated[
         "AsyncSession",
         Depends(db_helper.scoped_session_dependency),
