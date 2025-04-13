@@ -42,7 +42,7 @@ async def generate_reservations(
     random_tables_id: list[int] = [table[0].id for table in tables_select]
     print(random_tables_id)
     for id in random_tables_id:
-        reservation_time = fake.date_time_between(
+        reservation_time: datetime = fake.date_time_between(
             start_date=datetime.now(),
             end_date=datetime.now() + timedelta(days=30, hours=24, minutes=60),
         )

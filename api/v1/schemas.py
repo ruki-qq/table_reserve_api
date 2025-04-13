@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import datetime
 
 from pydantic import BaseModel
 
@@ -19,14 +19,14 @@ class Table(TableBase):
 
 class ReservationBase(BaseModel):
     customer_name: str
-    table_id: int
-    reservation_time: date
+    reservation_time: datetime
     duration_minutes: int
 
 
 class ReservationCreate(ReservationBase):
-    pass
+    table_id: int
 
 
 class Reservation(ReservationBase):
     id: int
+    table: Table

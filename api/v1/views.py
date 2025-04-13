@@ -78,6 +78,26 @@ async def get_reservation(
     return reservation
 
 
+@reservation_router.post(
+    "/",
+    response_model=schemas.Reservation,
+    status_code=status.HTTP_201_CREATED,
+)
+async def create_reservation(
+    reservation_in: schemas.ReservationCreate,
+    session: Annotated[
+        "AsyncSession",
+        Depends(db_helper.scoped_session_dependency),
+    ],
+) -> schemas.Reservation:
+    reservation = await crud.create_one(
+        session=session, model=models.Reservation, model_in=reservation_in
+    )
+    return await dependencies.get_reservation_by_id(
+        obj_id=reservation.id, session=session
+    )
+
+
 @reservation_router.delete("/{obj_id}/", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_reservation(
     reservation: Annotated[

@@ -10,13 +10,13 @@ class Table(Base):
     name: Mapped[str] = mapped_column(String(64), unique=True)
     seats: Mapped[int] = mapped_column(SmallInteger)
     location: Mapped[str] = mapped_column(String(64))
-    password: Mapped[str] = mapped_column(String(64))
 
     reservation = relationship(
         "Reservation",
         back_populates="table",
         cascade="all, delete",
         passive_deletes=True,
+        lazy="selectin",
     )
 
 
@@ -26,7 +26,7 @@ class Reservation(Base):
     reservation_time: Mapped[datetime] = mapped_column(DateTime)
     duration_minutes: Mapped[int] = mapped_column(SmallInteger)
 
-    table = relationship("Table", back_populates="reservation")
+    table = relationship("Table", back_populates="reservation", lazy="selectin")
     reservation_period: Mapped[TSRANGE] = mapped_column(TSRANGE)
 
     __table_args__ = (
