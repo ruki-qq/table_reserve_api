@@ -4,7 +4,7 @@ from typing import Type
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import joinedload, selectinload
+from sqlalchemy.orm import selectinload
 
 from api.v1 import models, schemas
 
@@ -37,7 +37,7 @@ async def create_one(
     session: AsyncSession,
     model: Type[models.Table | models.Reservation],
     model_in: schemas.TableCreate,
-) -> schemas.Table | schemas.Reservation | None:
+) -> schemas.Table | schemas.Reservation | dict[str, str]:
     if model == models.Reservation:
         reservation_end = model_in.reservation_time + timedelta(
             minutes=model_in.duration_minutes
@@ -50,9 +50,9 @@ async def create_one(
         session.add(obj)
         await session.commit()
         return obj
-    except IntegrityError:
+    except IntegrityError as e:
         await session.rollback()
-        print("The selected time slot is already booked for this table.")
+        return {"err": "The selected time slot is already booked for this table."}
 
 
 async def delete_one(
